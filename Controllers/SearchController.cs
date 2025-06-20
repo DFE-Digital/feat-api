@@ -90,15 +90,16 @@ namespace feat.api.Controllers
             
 
             var search = await aiSearchClient.SearchAsync<AiSearchCourse>(
+                request.Query,
                 new SearchOptions
                 {
-                    VectorSearch = new VectorSearchOptions
+                    VectorSearch = new()
                     {
                         Queries =
                         {
                             new VectorizedQuery(vectorizedResult)
                             {
-                                KNearestNeighborsCount = 50,
+                                KNearestNeighborsCount = 3,
                                 Fields = { "WHO_THIS_COURSE_IS_FOR_Vector" },
                             }
                         }
@@ -106,7 +107,6 @@ namespace feat.api.Controllers
                     Filter = request.IncludeOnlineCourses ? filter + " or (DELIVERY_MODE eq 'Online')" : filter,
                     IncludeTotalCount = true,
                     Size = request.PageSize,
-                    SearchMode = SearchMode.All,
                     Skip = (request.Page - 1) * request.PageSize,
                     SessionId = HttpContext.Session.Id,
                     OrderBy =
