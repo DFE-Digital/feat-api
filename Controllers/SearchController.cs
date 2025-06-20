@@ -99,8 +99,9 @@ namespace feat.api.Controllers
                         {
                             new VectorizedQuery(vectorizedResult)
                             {
-                                KNearestNeighborsCount = 3,
+                                KNearestNeighborsCount = 50,
                                 Fields = { "WHO_THIS_COURSE_IS_FOR_Vector" },
+                                Weight = 1.75f
                             }
                         }
                     },
