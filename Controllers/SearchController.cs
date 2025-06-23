@@ -99,9 +99,9 @@ namespace feat.api.Controllers
                         {
                             new VectorizedQuery(vectorizedResult)
                             {
-                                KNearestNeighborsCount = 50,
+                                KNearestNeighborsCount = azureOptions.KNN,
                                 Fields = { "WHO_THIS_COURSE_IS_FOR_Vector" },
-                                Weight = 1.75f
+                                Weight = azureOptions.Weight
                             }
                         }
                     },
@@ -149,7 +149,7 @@ namespace feat.api.Controllers
             [FromQuery] bool includeOnlineCourses = false,
             [FromQuery] OrderBy orderBy = OrderBy.Relevance,
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 3
+            [FromQuery] int pageSize = 20
         )
         {
             var request = new FindARequest()

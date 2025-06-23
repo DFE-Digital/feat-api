@@ -13,5 +13,9 @@ public class AzureOptions
     public string AISearchURL { get; set; } = string.Empty;
     
     public string AISearchIndex { get; set; } = string.Empty;
+
+    public float? Weight { get; set; } = 1.3f;
+    
+    public int? KNN { get; set; } = 115;
     
 }
