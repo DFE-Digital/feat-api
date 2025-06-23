@@ -12,7 +12,7 @@ public class FindARequest
     [Required]
     public required string Location { get; set; }
 
-    public bool IncludeOnlineCourses { get; set; }
+    public bool IncludeOnlineCourses { get; set; } = false;
 
     public double Radius { get; set; } = 10;
 
