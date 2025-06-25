@@ -109,7 +109,7 @@ namespace feat.api.Controllers
                     IncludeTotalCount = true,
                     Size = request.PageSize,
                     Skip = (request.Page - 1) * request.PageSize,
-                    SessionId = HttpContext.Session.Id,
+                    SessionId = request.SessionId,
                     OrderBy =
                     {
                         request.OrderBy switch
