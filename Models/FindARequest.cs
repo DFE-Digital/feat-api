@@ -12,6 +12,8 @@ public class FindARequest
     [Required]
     public required string Location { get; set; }
 
+    public string? SessionId { get; set; } = Guid.NewGuid().ToString();
+
     public bool IncludeOnlineCourses { get; set; } = false;
 
     public double Radius { get; set; } = 10;

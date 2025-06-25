@@ -20,15 +20,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-
 // Setup our HTTP client
 builder.Services.AddHttpClient("httpClient");
 builder.Services.AddSingleton<HttpClientRepository>();
@@ -38,6 +29,5 @@ app.UseHttpsRedirection();
 app.MapControllers();
 app.MapOpenApi();
 app.MapScalarApiReference();
-app.UseSession();
 
 app.Run();
