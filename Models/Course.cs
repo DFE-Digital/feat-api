@@ -6,7 +6,7 @@ namespace feat.api.Models;
 
 public class Course
 {
-    public Course(AiSearchCourse course, double? score, Geolocation location)
+    public Course(AiSearchCourse course, double? score, Geolocation? location)
     {
         Id = course.id;
         ProviderName = course.PROVIDER_NAME;
@@ -55,7 +55,7 @@ public class Course
         if (double.IsNaN(Longitude.Value))
             Longitude = null;
         
-        if (Latitude.HasValue && Longitude.HasValue)
+        if (Latitude.HasValue && Longitude.HasValue && location != null)
         {
             Distance = KilometersToMiles(CalculateDistance(
                 new Geolocation() { Latitude = Latitude.Value, Longitude = Longitude.Value },
@@ -64,7 +64,7 @@ public class Course
         }
         else
         {
-            Distance = 0;
+            Distance = null;
         }
         
         Score = score;

@@ -9,14 +9,13 @@ public class FindARequest
     [Required]
     public required string Query { get; set; }
 
-    [Required]
-    public required string Location { get; set; }
+    public string? Location { get; set; }
 
     public string? SessionId { get; set; } = Guid.NewGuid().ToString();
 
     public bool IncludeOnlineCourses { get; set; } = false;
 
-    public double Radius { get; set; } = 10;
+    public double Radius { get; set; } = 1000;
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrderBy OrderBy { get; set; } = OrderBy.Relevance;

@@ -50,41 +50,53 @@ namespace feat.api.Controllers
         [HttpPost]
         public async Task<FindAResponse> Post([FromBody] FindARequest request)
         {
-           var geolocation = new Geolocation();
+            Geolocation? geolocation = null;
 
-            Regex postcodeCheck = new Regex(@"^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$", RegexOptions.IgnoreCase);
-
-            // If it looks like a UK postcode, let's try and find our lat/long
-            if (postcodeCheck.IsMatch(request.Location))
+            if (!string.IsNullOrEmpty(request.Location))
             {
-                var response =
-                    await httpClientRepository.GetAsync<PostcodeResult>(
-                        $"https://api.postcodes.io/postcodes/{request.Location}");
-                if (response != null)
-                {
-                    geolocation.Latitude = response.Result.Latitude.GetValueOrDefault();
-                    geolocation.Longitude = response.Result.Longitude.GetValueOrDefault();
-                }
-            }
-            else
-            {
-                var response =
-                    await httpClientRepository.GetAsync<PlaceResult>(
-                        $"https://api.postcodes.io/places/?q={request.Location}&limit=1");
-                if (response is { Result.Count: > 0 })
-                {
-                    geolocation.Latitude = response.Result[0].Latitude.GetValueOrDefault();
-                    geolocation.Longitude = response.Result[0].Longitude.GetValueOrDefault();
-                }
-            }
+                geolocation = new Geolocation();
 
+                Regex postcodeCheck = new Regex(@"^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$", RegexOptions.IgnoreCase);
+
+                // If it looks like a UK postcode, let's try and find our lat/long
+                if (postcodeCheck.IsMatch(request.Location))
+                {
+                    var response =
+                        await httpClientRepository.GetAsync<PostcodeResult>(
+                            $"https://api.postcodes.io/postcodes/{request.Location}");
+                    if (response != null)
+                    {
+                        geolocation.Latitude = response.Result.Latitude.GetValueOrDefault();
+                        geolocation.Longitude = response.Result.Longitude.GetValueOrDefault();
+                    }
+                }
+                else
+                {
+                    var response =
+                        await httpClientRepository.GetAsync<PlaceResult>(
+                            $"https://api.postcodes.io/places/?q={request.Location}&limit=1");
+                    if (response is { Result.Count: > 0 })
+                    {
+                        geolocation.Latitude = response.Result[0].Latitude.GetValueOrDefault();
+                        geolocation.Longitude = response.Result[0].Longitude.GetValueOrDefault();
+                    }
+                }
+
+                
+            }
             // As our radius is specified in miles, 
             double radiusInKm = request.Radius * 1.60934;
-
+            
             var embedding = await embeddingClient.GenerateEmbeddingAsync(request.Query);
 
-            string filter =
-                $"(geo.distance(GEOPOINT_LATLONG, geography'POINT({geolocation.Latitude} {geolocation.Longitude})') lt {radiusInKm})";
+            string filter = "";
+            string orderby = "";
+            
+            if (geolocation != null)
+                filter += $"(geo.distance(GEOPOINT_LATLONG, geography'POINT({geolocation.Latitude} {geolocation.Longitude})') lt {radiusInKm})";
+            
+            if (geolocation != null && request.OrderBy == OrderBy.Distance)
+                orderby = $"geo.distance(GEOPOINT_LATLONG, geography'POINT({geolocation.Latitude} {geolocation.Longitude})')";
 
             ReadOnlyMemory<float> vectorizedResult = embedding.Value.ToFloats();
             
@@ -110,15 +122,7 @@ namespace feat.api.Controllers
                     Size = request.PageSize,
                     Skip = (request.Page - 1) * request.PageSize,
                     SessionId = request.SessionId,
-                    OrderBy =
-                    {
-                        request.OrderBy switch
-                        {
-                            OrderBy.Distance =>
-                                $"geo.distance(GEOPOINT_LATLONG, geography'POINT({geolocation.Latitude} {geolocation.Longitude})')",
-                            _ => ""
-                        }
-                    }
+                    OrderBy = { orderby }
                 });
 
 
