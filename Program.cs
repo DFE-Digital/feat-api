@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using feat.api.Configuration;
 using feat.api.Repositories;
+using feat.api.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,14 +21,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
+builder.Services.AddSingleton<ISearchService, SearchService>();
 
 // Setup our HTTP client
 builder.Services.AddHttpClient("httpClient");
@@ -38,6 +32,5 @@ app.UseHttpsRedirection();
 app.MapControllers();
 app.MapOpenApi();
 app.MapScalarApiReference();
-app.UseSession();
 
 app.Run();

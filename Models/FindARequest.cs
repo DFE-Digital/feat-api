@@ -9,12 +9,13 @@ public class FindARequest
     [Required]
     public required string Query { get; set; }
 
-    [Required]
-    public required string Location { get; set; }
+    public string? Location { get; set; }
 
-    public bool IncludeOnlineCourses { get; set; }
+    public string? SessionId { get; set; } = Guid.NewGuid().ToString();
 
-    public double Radius { get; set; } = 10;
+    public bool IncludeOnlineCourses { get; set; } = false;
+
+    public double Radius { get; set; } = 1000;
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrderBy OrderBy { get; set; } = OrderBy.Relevance;
@@ -22,5 +23,7 @@ public class FindARequest
     public int Page { get; set; } = 1;
 
     public int PageSize { get; set; } = 10;
+
+    public bool? Debug { get; set; } = false;
 
 }

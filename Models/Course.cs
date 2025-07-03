@@ -1,11 +1,13 @@
 
 using System.Text.Json.Serialization;
+using Azure.Search.Documents.Models;
+using GeographicLib;
 
 namespace feat.api.Models;
 
 public class Course
 {
-    public Course(AiSearchCourse course, double? score, Geolocation location)
+    public Course(AiSearchCourse course, double? score, Geolocation? location, DocumentDebugInfo? debugInfo = null)
     {
         Id = course.id;
         ProviderName = course.PROVIDER_NAME;
@@ -54,7 +56,7 @@ public class Course
         if (double.IsNaN(Longitude.Value))
             Longitude = null;
         
-        if (Latitude.HasValue && Longitude.HasValue)
+        if (Latitude.HasValue && Longitude.HasValue && location != null)
         {
             Distance = KilometersToMiles(CalculateDistance(
                 new Geolocation() { Latitude = Latitude.Value, Longitude = Longitude.Value },
@@ -63,10 +65,12 @@ public class Course
         }
         else
         {
-            Distance = 0;
+            Distance = null;
         }
         
         Score = score;
+
+        DebugInfo = debugInfo;
     }
     
     public double? Score { get; set; }
@@ -149,6 +153,8 @@ public class Course
     public string? EmployerName { get; set; }
     
     public string Id { get; set; }
+
+    public DocumentDebugInfo? DebugInfo { get; set; } = null;
     
     
     
@@ -179,14 +185,11 @@ public class Course
     
     private double CalculateDistance(Geolocation point1, Geolocation point2)
     {
-        double R = 6371;
-        var lat = GetRadians(point2.Latitude - point1.Latitude);
-        var lng = GetRadians(point2.Longitude - point1.Longitude);
-        var h1 = Math.Sin(lat / 2) * Math.Sin(lat / 2) +
-                 Math.Cos(GetRadians(point1.Latitude)) * Math.Cos(GetRadians(point2.Latitude)) *
-                 Math.Sin(lng / 2) * Math.Sin(lng / 2);
-        var h2 = 2 * Math.Asin(Math.Min(1, Math.Sqrt(h1)));
-        return R * h2;
+        Geodesic.WGS84.Inverse(point1.Latitude, point1.Longitude, point2.Latitude, point2.Longitude, out var distance);
+        if (distance > 0)
+            return distance / 1000;
+        
+        return 0;
     }
 
     private double KilometersToMiles(double value)
@@ -198,10 +201,4 @@ public class Course
 
         return 0;
     }
-
-    private static double GetRadians(double value)
-    {
-        return value * Math.PI / 180;
-    }
-    
 }
