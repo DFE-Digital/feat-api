@@ -20,7 +20,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddOpenApi();
-
 builder.Services.AddSingleton<ISearchService, SearchService>();
 
 // Setup our HTTP client
