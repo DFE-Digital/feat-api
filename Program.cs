@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using feat.api.Configuration;
 using feat.api.Repositories;
+using feat.api.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<ISearchService, SearchService>();
 
 // Setup our HTTP client
 builder.Services.AddHttpClient("httpClient");

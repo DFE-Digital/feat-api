@@ -1,3 +1,5 @@
+using Azure.Search.Documents.Models;
+
 namespace feat.api.Models;
 
 public class FindAResponse
@@ -9,4 +11,5 @@ public class FindAResponse
     public long? Total { get; set; }
     
     public List<Course> Courses { get; set; }
+    
 }

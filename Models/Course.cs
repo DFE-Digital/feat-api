@@ -1,12 +1,13 @@
 
 using System.Text.Json.Serialization;
+using Azure.Search.Documents.Models;
 using GeographicLib;
 
 namespace feat.api.Models;
 
 public class Course
 {
-    public Course(AiSearchCourse course, double? score, Geolocation? location)
+    public Course(AiSearchCourse course, double? score, Geolocation? location, DocumentDebugInfo? debugInfo = null)
     {
         Id = course.id;
         ProviderName = course.PROVIDER_NAME;
@@ -68,6 +69,8 @@ public class Course
         }
         
         Score = score;
+
+        DebugInfo = debugInfo;
     }
     
     public double? Score { get; set; }
@@ -150,6 +153,8 @@ public class Course
     public string? EmployerName { get; set; }
     
     public string Id { get; set; }
+
+    public DocumentDebugInfo? DebugInfo { get; set; } = null;
     
     
     
