@@ -9,7 +9,9 @@ public class FindAResponse
     public int PageSize { get; set; }
     
     public long? Total { get; set; }
-    
-    public List<Course> Courses { get; set; }
-    
+
+    public List<Course> Courses { get; set; } = [];
+
+    public IDictionary<string, IList<FacetResult>> Facets { get; set; }
+
 }
