@@ -123,20 +123,20 @@ public class SearchService: ISearchService
                             {
                                 KNearestNeighborsCount = _azureOptions.KNN,
                                 Fields = { "WHO_THIS_COURSE_IS_FOR_Vector" },
-                                Weight = _azureOptions.Weight
+                                Weight = 10
                             },
                             new VectorizedQuery(embeddings)
                             {
                                 KNearestNeighborsCount = _azureOptions.KNN,
                                 Fields = { "COURSE_NAME_Vector" },
-                                Weight = _azureOptions.Weight * 2
+                                Weight = 10
                             }
                         },
                         
                     },
                     SemanticSearch = new SemanticSearchOptions()
                     {
-                        Debug = QueryDebugMode.All
+                        Debug = request.Debug.GetValueOrDefault(false) ? QueryDebugMode.All : QueryDebugMode.Disabled
                     },
                     SearchFields =
                     {
@@ -174,7 +174,8 @@ public class SearchService: ISearchService
             {
                 Page = request.Page,
                 PageSize = request.PageSize,
-                Courses = []
+                Courses = [],
+                Facets = results.Facets.Where(f => f.Value.Any()).Select(f => new Facet(f.Key, f.Value)).ToList()
             };
 
             await foreach (var searchResult in search.Value.GetResultsAsync())

@@ -6,5 +6,5 @@ namespace feat.api.Services;
 
 public interface ISearchService
 {
-    Task<FindAResponse> HybridSearch([FromBody] FindARequest request);
+    Task<FindAResponse> HybridSearch(FindARequest request);
 }

@@ -36,7 +36,8 @@ namespace feat.api.Controllers
             [FromQuery] bool includeOnlineCourses = false,
             [FromQuery] OrderBy orderBy = OrderBy.Relevance,
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 20
+            [FromQuery] int pageSize = 20,
+            [FromQuery] bool debug = false
         )
         {
             var request = new FindARequest()
@@ -47,7 +48,8 @@ namespace feat.api.Controllers
                 IncludeOnlineCourses = includeOnlineCourses,
                 OrderBy = orderBy,
                 Page = page,
-                PageSize = pageSize
+                PageSize = pageSize,
+                Debug = debug
             };
             return await searchService.HybridSearch(request);
         }
