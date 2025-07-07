@@ -175,7 +175,7 @@ public class SearchService: ISearchService
                 Page = request.Page,
                 PageSize = request.PageSize,
                 Courses = [],
-                Facets = results.Facets
+                Facets = results.Facets.Where(f => f.Value.Any()).Select(f => new Facet(f.Key, f.Value)).ToList()
             };
 
             await foreach (var searchResult in search.Value.GetResultsAsync())

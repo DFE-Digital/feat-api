@@ -12,6 +12,6 @@ public class FindAResponse
 
     public List<Course> Courses { get; set; } = [];
 
-    public IDictionary<string, IList<FacetResult>> Facets { get; set; }
+    public IList<Facet> Facets { get; set; } = new List<Facet>();
 
 }
