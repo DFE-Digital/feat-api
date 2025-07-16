@@ -7,7 +7,7 @@ namespace feat.api.Models;
 
 public class Course
 {
-    public Course(AiSearchCourse course, double? score, Geolocation? location, DocumentDebugInfo? debugInfo = null)
+    public Course(AiSearchCourse course, double? score, Geolocation? location, DocumentDebugInfo? debugInfo, IDictionary<string, IList<string>> highlights)
     {
         Id = course.id;
         ProviderName = course.PROVIDER_NAME;
@@ -67,8 +67,15 @@ public class Course
         {
             Distance = null;
         }
+
+        if (highlights is { Count: not 0 })
+        {
+            Highlights = highlights;
+        }
         
         Score = score;
+        
+        
 
         DebugInfo = debugInfo;
     }
@@ -156,7 +163,7 @@ public class Course
 
     public DocumentDebugInfo? DebugInfo { get; set; } = null;
     
-    
+    public IDictionary<string, IList<string>> Highlights { get; set; } = new Dictionary<string, IList<string>>();
     
     private bool ToBoolean(string value)
     {
