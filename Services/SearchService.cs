@@ -148,6 +148,10 @@ public class SearchService: ISearchService
                         //nameof(AiSearchCourse.SSAT1),
                         //nameof(AiSearchCourse.SSAT2)
                     },
+                    HighlightFields = { 
+                        nameof(AiSearchCourse.COURSE_NAME), 
+                        nameof(AiSearchCourse.WHO_THIS_COURSE_IS_FOR) 
+                    },
                     Facets =
                     {
                         nameof(AiSearchCourse.DELIVERY_MODE), 
@@ -180,18 +184,16 @@ public class SearchService: ISearchService
 
             await foreach (var searchResult in search.Value.GetResultsAsync())
             {
-                if (searchResult.DocumentDebugInfo != null)
-                {
-                    result.Courses.Add(new Course(searchResult.Document, searchResult.Score, geolocation,
-                        searchResult.DocumentDebugInfo));
-                }
-                else
-                {
-                    result.Courses.Add(new Course(searchResult.Document, searchResult.Score, geolocation));
-                }
+
+                result.Courses.Add(new Course(
+                    course: searchResult.Document,
+                    score: searchResult.Score,
+                    location: geolocation,
+                    debugInfo: searchResult.DocumentDebugInfo,
+                    highlights: searchResult.Highlights));
 
             }
-            
+
             result.Total = results.TotalCount;
 
             return result;
